@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insertion Sort Visualizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e;
+            color: white;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000;
+            padding: 10px 20px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 30px;
+            margin-right: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+        }
+        
+        .nav-links a.active {
+            color: #ffd700;
+        }
+        
+        .login-btn {
+            background-color: transparent;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 5px 15px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .main-content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .sort-title {
+            font-size: 28px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .sort-title span {
+            transition: color 0.3s;
+        }
+        
+        .sort-description {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .visualization-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .input-section {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .input-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        input, button, select {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 3px;
+            background-color: #444;
+            color: white;
+        }
+        
+        button {
+            cursor: pointer;
+            background-color: #4a9e4a;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #5aba5a;
+        }
+        
+        .visualization {
+            height: 300px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .bar {
+            background-color: #7dd3fc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            transition: height 0.3s;
+            min-width: 40px;
+        }
+        
+        .bar-value {
+            padding: 5px 0;
+            font-weight: bold;
+        }
+        
+        .bar-index {
+            position: absolute;
+            bottom: -25px;
+            font-size: 12px;
+        }
+        
+        .console-section {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            height: 150px;
+            overflow-y: auto;
+        }
+        
+        .console-entry {
+            margin-bottom: 5px;
+            border-left: 3px solid #7dd3fc;
+            padding-left: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .playback-controls {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .playback-controls button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Colors for sorting */
+        .sorted {
+            background-color: #4ade80;
+        }
+        
+        .current {
+            background-color: #f87171;
+        }
+        
+        .comparing {
+            background-color: #facc15;
+        }
+        
+        /* Footer */
+        .footer {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px;
+            background-color: #000;
+            border-top: 1px solid #333;
+            margin-top: 20px;
+        }
+        
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div style="width: 30px; height: 30px; background-color: #FFD700; display: flex; align-items: center; justify-content: center; margin-right: 10px;">7</div>
+            <span style="font-weight: bold;">VISU<span style="color: #FFD700;">ALGO</span>.net</span>
+            <span style="margin: 0 5px;">/</span>
+            <span>en</span>
+            <span style="margin: 0 5px;">/</span>
+            <span>sorting</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="#">BUBBLE SORT</a>
+            <a href="#">SEL</a>
+            <a class="active" href="#">INS</a>
+            <a href="#">MER</a>
+            <a href="#">QUI</a>
+            <a href="#">R-Q</a>
+            <a href="#">COU</a>
+            <a href="#">RAD</a>
+        </div>
+        
+        <div>
+            <span>Exploration Mode ▼</span>
+            <button class="login-btn">LOGIN</button>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <h1 class="sort-title">
+            <span style="color: #f87171;">I</span>
+            <span style="color: #fbbf24;">N</span>
+            <span style="color: #4ade80;">S</span>
+            <span style="color: #60a5fa;">E</span>
+            <span style="color: #c084fc;">R</span>
+            <span style="color: #f472b6;">T</span>
+            <span style="color: #f87171;">I</span>
+            <span style="color: #fbbf24;">O</span>
+            <span style="color: #4ade80;">N</span>
+            <span> </span>
+            <span style="color: #60a5fa;">S</span>
+            <span style="color: #c084fc;">O</span>
+            <span style="color: #f472b6;">R</span>
+            <span style="color: #f87171;">T</span>
+        </h1>
+        
+        <div class="sort-description">
+            Insertion Sort works similar to how you might sort playing cards in your hand. The algorithm builds the final sorted array one item at a time by comparing each element with the already sorted part and inserting it at the correct position. For each position, it checks the value against the largest value in the sorted array. If larger, it leaves the element in place and moves to the next. If smaller, it finds the correct position within the sorted array and shifts all the larger values up to make space.
+        </div>
+        
+        <div class="visualization-area">
+            <div class="input-section">
+                <div class="input-controls">
+                    <input type="text" id="array-input" placeholder="Enter numbers (e.g., 29,10,14,37,14)">
+                    <button id="generate-btn">Generate Bars</button>
+                    <button id="random-btn">Random Array</button>
+                    <button id="sort-btn">Sort</button>
+                </div>
+                
+                <div class="visualization" id="visualization-container">
+                    <!-- Bars will be generated here -->
+                </div>
+                
+                <div class="controls">
+                    <div class="playback-controls">
+                        <button id="skip-start">⏮</button>
+                        <button id="step-back">⏪</button>
+                        <button id="pause-play">⏯</button>
+                        <button id="step-forward">⏩</button>
+                        <button id="skip-end">⏭</button>
+                    </div>
+                    
+                    <div class="speed-control">
+                        <span>Speed:</span>
+                        <input type="range" id="speed-control" min="1" max="10" value="5">
+                        <span id="speed-value">1.0x</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="console-section" id="console">
+                <div class="console-entry">Welcome to Insertion Sort Visualizer! Enter numbers or generate a random array to begin.</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <a href="#">Share</a>
+        <a href="#">About</a>
+        <a href="#">Team</a>
+        <a href="#">Terms of use</a>
+        <a href="#">Privacy Policy</a>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const arrayInput = document.getElementById('array-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const randomBtn = document.getElementById('random-btn');
+        const sortBtn = document.getElementById('sort-btn');
+        const visualizationContainer = document.getElementById('visualization-container');
+        const consoleEl = document.getElementById('console');
+        const pausePlayBtn = document.getElementById('pause-play');
+        const skipStartBtn = document.getElementById('skip-start');
+        const skipEndBtn = document.getElementById('skip-end');
+        const stepBackBtn = document.getElementById('step-back');
+        const stepForwardBtn = document.getElementById('step-forward');
+        const speedControl = document.getElementById('speed-control');
+        const speedValue = document.getElementById('speed-value');
+        
+        // Variables
+        let array = [];
+        let sortingSteps = [];
+        let currentStep = -1;
+        let isPlaying = false;
+        let animationInterval;
+        let sortingSpeed = 500; // ms
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            updateSpeedDisplay();
+            setDefaultArray();
+        });
+        
+        // Event Listeners
+        generateBtn.addEventListener('click', generateArrayFromInput);
+        randomBtn.addEventListener('click', generateRandomArray);
+        sortBtn.addEventListener('click', startSorting);
+        pausePlayBtn.addEventListener('click', togglePlayPause);
+        skipStartBtn.addEventListener('click', skipToStart);
+        skipEndBtn.addEventListener('click', skipToEnd);
+        stepBackBtn.addEventListener('click', stepBack);
+        stepForwardBtn.addEventListener('click', stepForward);
+        speedControl.addEventListener('input', updateSpeed);
+        
+        // Functions
+        function setDefaultArray() {
+            array = [29, 10, 14, 37, 14];
+            arrayInput.value = array.join(',');
+            renderArray();
+            addConsoleMessage("Default array loaded: [" + array.join(', ') + "]");
+        }
+        
+        function generateArrayFromInput() {
+            const input = arrayInput.value.trim();
+            if (input === '') {
+                addConsoleMessage("Please enter numbers separated by commas.");
+                return;
+            }
+            
+            const inputArray = input.split(',').map(item => parseInt(item.trim(), 10));
+            
+            if (inputArray.some(isNaN)) {
+                addConsoleMessage("Invalid input. Please enter numbers only.");
+                return;
+            }
+            
+            array = inputArray;
+            renderArray();
+            resetSorting();
+            addConsoleMessage("Array generated: [" + array.join(', ') + "]");
+        }
+        
+        function generateRandomArray() {
+            const size = Math.floor(Math.random() * 5) + 5; // Random size between 5-10
+            array = [];
+            for (let i = 0; i < size; i++) {
+                array.push(Math.floor(Math.random() * 50) + 1); // Random values between 1-50
+            }
+            
+            arrayInput.value = array.join(',');
+            renderArray();
+            resetSorting();
+            addConsoleMessage("Random array generated: [" + array.join(', ') + "]");
+        }
+        
+        function renderArray(currentIndex = -1, comparingIndex = -1) {
+            visualizationContainer.innerHTML = '';
+            
+            const maxValue = Math.max(...array);
+            const containerHeight = visualizationContainer.clientHeight - 30; // Reserve space for index
+            
+            array.forEach((value, index) => {
+                const barHeight = (value / maxValue) * (containerHeight - 30); // Reserve space for value
+                
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = `${barHeight}px`;
+                
+                // Set color based on sorting state
+                if (index < currentIndex) {
+                    bar.classList.add('sorted');
+                } else if (index === currentIndex) {
+                    bar.classList.add('current');
+                } else if (index === comparingIndex) {
+                    bar.classList.add('comparing');
+                }
+                
+                // Add value at top
+                const valueElement = document.createElement('div');
+                valueElement.className = 'bar-value';
+                valueElement.textContent = value;
+                bar.appendChild(valueElement);
+                
+                // Add index at bottom
+                const indexElement = document.createElement('div');
+                indexElement.className = 'bar-index';
+                indexElement.textContent = index;
+                bar.appendChild(indexElement);
+                
+                visualizationContainer.appendChild(bar);
+            });
+        }
+        
+        function addConsoleMessage(message) {
+            const entry = document.createElement('div');
+            entry.className = 'console-entry';
+            entry.textContent = message;
+            consoleEl.appendChild(entry);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+        
+        function resetSorting() {
+            clearInterval(animationInterval);
+            isPlaying = false;
+            pausePlayBtn.textContent = '⏯';
+            sortingSteps = [];
+            currentStep = -1;
+        }
+        
+        function startSorting() {
+            if (array.length === 0) {
+                addConsoleMessage("Please generate an array first.");
+                return;
+            }
+            
+            resetSorting();
+            generateSortingSteps();
+            
+            addConsoleMessage("Starting Insertion Sort on array: [" + array.join(', ') + "]");
+            togglePlayPause();
+        }
+        
+        function generateSortingSteps() {
+            sortingSteps = [];
+            
+            // Create a copy of the array to sort
+            const arrayCopy = [...array];
+            
+            // Add initial state
+            sortingSteps.push({
+                array: [...arrayCopy],
+                currentIndex: -1,
+                comparingIndex: -1,
+                message: "Starting Insertion Sort"
+            });
+            
+            // Insertion Sort algorithm with steps
+            for (let i = 1; i < arrayCopy.length; i++) {
+                // Highlight the current element to be inserted
+                sortingSteps.push({
+                    array: [...arrayCopy],
+                    currentIndex: i,
+                    comparingIndex: -1,
+                    message: `Selecting element at index ${i} with value ${arrayCopy[i]}`
+                });
+                
+                let key = arrayCopy[i];
+                let j = i - 1;
+                
+                // Compare with each element in the sorted portion
+                while (j >= 0 && arrayCopy[j] > key) {
+                    sortingSteps.push({
+                        array: [...arrayCopy],
+                        currentIndex: i,
+                        comparingIndex: j,
+                        message: `Comparing ${key} with ${arrayCopy[j]} at index ${j}`
+                    });
+                    
+                    // Move elements forward
+                    arrayCopy[j + 1] = arrayCopy[j];
+                    
+                    sortingSteps.push({
+                        array: [...arrayCopy],
+                        currentIndex: i,
+                        comparingIndex: j,
+                        message: `Moving ${arrayCopy[j]} one position ahead`
+                    });
+                    
+                    j--;
+                }
+                
+                // Place the key in its correct position
+                arrayCopy[j + 1] = key;
+                
+                sortingSteps.push({
+                    array: [...arrayCopy],
+                    currentIndex: j + 1,
+                    comparingIndex: -1,
+                    message: `Placing ${key} at correct position ${j + 1}`
+                });
+            }
+            
+            // Add final state
+            sortingSteps.push({
+                array: [...arrayCopy],
+                currentIndex: arrayCopy.length,
+                comparingIndex: -1,
+                message: "Sorting complete!"
+            });
+        }
+        
+        function playNextStep() {
+            if (currentStep < sortingSteps.length - 1) {
+                currentStep++;
+                const step = sortingSteps[currentStep];
+                
+                array = [...step.array];
+                renderArray(step.currentIndex, step.comparingIndex);
+                addConsoleMessage(step.message);
+                
+                if (currentStep === sortingSteps.length - 1) {
+                    isPlaying = false;
+                    pausePlayBtn.textContent = '⏯';
+                    clearInterval(animationInterval);
+                    addConsoleMessage("Sorting completed!");
+                }
+            }
+        }
+        
+        function togglePlayPause() {
+            isPlaying = !isPlaying;
+            pausePlayBtn.textContent = isPlaying ? '⏸' : '⏯';
+            
+            if (isPlaying) {
+                if (currentStep === sortingSteps.length - 1) {
+                    // If at the end, restart
+                    skipToStart();
+                }
+                animationInterval = setInterval(playNextStep, sortingSpeed);
+            } else {
+                clearInterval(animationInterval);
+            }
+        }
+        
+        function skipToStart() {
+            clearInterval(animationInterval);
+            isPlaying = false;
+            pausePlayBtn.textContent = '⏯';
+            currentStep = -1;
+            
+            array = [...sortingSteps[0].array];
+            renderArray();
+            addConsoleMessage("Reset to initial state.");
+        }
+        
+        function skipToEnd() {
+            clearInterval(animationInterval);
+            isPlaying = false;
+            pausePlayBtn.textContent = '⏯';
+            currentStep = sortingSteps.length - 1;
+            
+            const finalStep = sortingSteps[currentStep];
+            array = [...finalStep.array];
+            renderArray(finalStep.currentIndex, finalStep.comparingIndex);
+            addConsoleMessage("Skipped to final sorted state.");
+        }
+        
+        function stepBack() {
+            clearInterval(animationInterval);
+            isPlaying = false;
+            pausePlayBtn.textContent = '⏯';
+            
+            if (currentStep > 0) {
+                currentStep--;
+                const step = sortingSteps[currentStep];
+                array = [...step.array];
+                renderArray(step.currentIndex, step.comparingIndex);
+                addConsoleMessage("Step back: " + step.message);
+            }
+        }
+        
+        function stepForward() {
+            clearInterval(animationInterval);
+            isPlaying = false;
+            pausePlayBtn.textContent = '⏯';
+            
+            if (currentStep < sortingSteps.length - 1) {
+                playNextStep();
+            }
+        }
+        
+        function updateSpeed() {
+            const speedFactor = speedControl.value / 5;
+            sortingSpeed = 1000 / speedFactor;
+            
+            updateSpeedDisplay();
+            
+            if (isPlaying) {
+                clearInterval(animationInterval);
+                animationInterval = setInterval(playNextStep, sortingSpeed);
+            }
+        }
+        
+        function updateSpeedDisplay() {
+            const speedFactor = speedControl.value / 5;
+            speedValue.textContent = speedFactor.toFixed(1) + 'x';
+        }
+    </script>
+</body>
+</html>

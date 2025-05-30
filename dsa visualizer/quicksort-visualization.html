@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisuAlgo - Sorting Algorithm Visualization</title>
+    <link rel="stylesheet" href="./bubblesort.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="logo-container">    
+            <a href="./enhanced-visualgo-website.html">
+            <img src="./VisuAlgo logo.png" alt="VisuAlgo Logo" class="logo">
+        </a>
+            <div class="logo-text">VisuAlgo</div>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search algorithms...">
+        </div>
+        <button class="mode-toggle" id="modeToggle">Dark Mode</button>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1 class="algorithm-title">Quick Sort Visualization</h1>
+        <p class="algorithm-description">
+            Quick Sort is an efficient, divide-and-conquer sorting algorithm. It works by selecting a 'pivot' element 
+            from the array and partitioning the other elements into two sub-arrays according to whether they are less than 
+            or greater than the pivot. The sub-arrays are then recursively sorted. Quick Sort has an average-case time 
+            complexity of O(n log n), making it efficient for large datasets, though its worst-case complexity is O(n²).
+        </p>
+
+        <div class="visualizer-container">
+            <div class="visualizer">
+                <div class="controls">
+                    <div class="input-container">
+                        <label for="array-input">Input Numbers:</label>
+                        <input type="text" id="array-input" class="input-field" placeholder="e.g., 64,34,25,12,22,11,90" value="64,34,25,12,22,11,90">
+                        <button id="generate-btn" class="btn btn-generate">Generate Bars</button>
+                    </div>
+                    <div class="input-container">
+                        <button id="sort-btn" class="btn btn-sort">Start Sorting</button>
+                        <button id="pause-btn" class="btn btn-pause">Pause</button>
+                        <button id="reset-btn" class="btn btn-reset">Reset</button>
+                        <div class="speed-container">
+                            <label for="speed-slider">Speed:</label>
+                            <input type="range" id="speed-slider" class="speed-slider" min="1" max="5" value="2">
+                        </div>
+                    </div>
+                </div>
+                <div id="array-container" class="array-container">
+                    <!-- Array bars will be generated here -->
+                </div>
+            </div>
+            <div class="console">
+                <h3 class="console-title">Operation Log</h3>
+                <div id="console-output">
+                    <div class="console-message info">Welcome to Quick Sort Visualization. Generate bars or enter numbers to begin.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-section">
+            <h3 class="code-title">Quick Sort Implementation</h3>
+            <pre class="code-block">
+function quickSort(arr, low = 0, high = arr.length - 1) {
+    if (low < high) {
+        // Get the partition index - pivot is in its final sorted position
+        const pivotIndex = partition(arr, low, high);
+        
+        // Recursively sort elements before and after the pivot
+        quickSort(arr, low, pivotIndex - 1);
+        quickSort(arr, pivotIndex + 1, high);
+    }
+    return arr;
+}
+
+function partition(arr, low, high) {
+    // Choose the rightmost element as the pivot
+    const pivot = arr[high];
+    
+    // Index of smaller element
+    let i = low - 1;
+    
+    // Compare each element with pivot
+    for (let j = low; j < high; j++) {
+        // If current element is smaller than the pivot
+        if (arr[j] < pivot) {
+            // Increment index of smaller element
+            i++;
+            // Swap arr[i] and arr[j]
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+    }
+    
+    // Swap arr[i+1] and arr[high] (the pivot)
+    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+    
+    // Return the position where partition is done
+    return i + 1;
+}</pre>
+        </div>
+    </div>
+
+    <script>
+        // Dark/Light Mode Toggle Functionality
+        const modeToggle = document.getElementById('modeToggle');
+        const body = document.body;
+
+        modeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                modeToggle.textContent = 'Light Mode';
+            } else {
+                modeToggle.textContent = 'Dark Mode';
+            }
+        });
+
+        // Sorting Visualizer Code
+        const arrayContainer = document.getElementById('array-container');
+        const consoleOutput = document.getElementById('console-output');
+        const arrayInput = document.getElementById('array-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const sortBtn = document.getElementById('sort-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const speedSlider = document.getElementById('speed-slider');
+
+        let array = [];
+        let sorting = false;
+        let paused = false;
+        let sortingInterval;
+
+        // Generate array bars based on input
+        function generateArray() {
+            // Clear previous arrays
+            arrayContainer.innerHTML = '';
+            consoleOutput.innerHTML = '';
+            addConsoleMessage('Array generated.', 'info');
+
+            // Parse input values
+            const inputValues = arrayInput.value.split(',').map(val => parseInt(val.trim())).filter(val => !isNaN(val));
+            
+            if (inputValues.length === 0) {
+                addConsoleMessage('Please enter valid numbers separated by commas.', 'info');
+                return;
+            }
+
+            array = inputValues;
+            
+            // Find max value for scaling
+            const maxValue = Math.max(...array);
+            
+            // Create and add bars to container
+            array.forEach((value, index) => {
+                const heightPercentage = (value / maxValue) * 100;
+                
+                // Main array bar
+                const bar = document.createElement('div');
+                bar.classList.add('array-bar');
+                bar.style.height = `${heightPercentage * 2.5}px`; // Scale height
+                bar.innerHTML = value;
+                
+                // Add index number under each bar
+                const indexLabel = document.createElement('div');
+                indexLabel.classList.add('array-bar-index');
+                indexLabel.textContent = index;
+                bar.appendChild(indexLabel);
+                
+                arrayContainer.appendChild(bar);
+            });
+            
+            addConsoleMessage(`Created array: [${array.join(', ')}]`, 'info');
+        }
+
+        // Add message to console
+        function addConsoleMessage(message, type) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('console-message', type);
+            messageElement.textContent = message;
+            consoleOutput.appendChild(messageElement);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        // Update the main array visualization
+        function updateBars() {
+            const bars = arrayContainer.querySelectorAll('.array-bar');
+            const maxValue = Math.max(...array);
+            
+            array.forEach((value, index) => {
+                if (index < bars.length) {
+                    const heightPercentage = (value / maxValue) * 100;
+                    bars[index].style.height = `${heightPercentage * 2.5}px`;
+                    bars[index].innerHTML = value;
+                    
+                    // Remove existing index labels to avoid duplicates
+                    const existingLabel = bars[index].querySelector('.array-bar-index');
+                    if (existingLabel) {
+                        bars[index].removeChild(existingLabel);
+                    }
+                    
+                    const indexLabel = document.createElement('div');
+                    indexLabel.classList.add('array-bar-index');
+                    indexLabel.textContent = index;
+                    bars[index].appendChild(indexLabel);
+                }
+            });
+        }
+
+        // Set bars to active/highlighted state
+        function highlightBars(indices, className) {
+            const bars = arrayContainer.querySelectorAll('.array-bar');
+            indices.forEach(index => {
+                if (index >= 0 && index < bars.length) {
+                    bars[index].classList.add(className);
+                }
+            });
+        }
+
+        // Reset bar states
+        function resetBarStates() {
+            const bars = arrayContainer.querySelectorAll('.array-bar');
+            bars.forEach(bar => {
+                bar.classList.remove('comparing', 'swapping', 'sorted', 'pivot', 'lesser', 'greater', 'partitioning');
+            });
+        }
+
+        // Mark section of array as sorted
+        function markSorted(indices) {
+            const bars = arrayContainer.querySelectorAll('.array-bar');
+            indices.forEach(index => {
+                if (index >= 0 && index < bars.length) {
+                    bars[index].classList.add('sorted');
+                }
+            });
+        }
+
+        // Mark all bars as sorted
+        function markAllSorted() {
+            const bars = arrayContainer.querySelectorAll('.array-bar');
+            bars.forEach(bar => {
+                bar.classList.add('sorted');
+            });
+        }
+
+        // Get delay based on speed slider
+        function getDelay() {
+            const speed = parseInt(speedSlider.value);
+            return 1000 / speed; // Faster speeds = smaller delays
+        }
+
+        // Check for pause
+        async function checkPause() {
+            if (paused) {
+                await new Promise(resolve => {
+                    sortingInterval = setInterval(() => {
+                        if (!paused) {
+                            clearInterval(sortingInterval);
+                            resolve();
+                        }
+                    }, 100);
+                });
+            }
+        }
+
+        // Quick Sort Algorithm with visualization
+        async function quickSort() {
+            sorting = true;
+            paused = false;
+            pauseBtn.textContent = 'Pause';
+            
+            addConsoleMessage('Starting Quick Sort...', 'info');
+            
+            await quickSortRecursive(0, array.length - 1);
+            
+            // Mark all elements as sorted
+            resetBarStates();
+            markAllSorted();
+            addConsoleMessage('Quick Sort complete! Array is sorted.', 'complete');
+            sorting = false;
+        }
+        
+        // Recursive quick sort with visualization
+        async function quickSortRecursive(low, high) {
+            // Base case: array of size 1 is already sorted
+            if (low >= high) {
+                if (low === high) {
+                    await checkPause();
+                    resetBarStates();
+                    highlightBars([low], 'sorted');
+                    addConsoleMessage(`Element at index ${low} is in sorted position: [${array[low]}]`, 'info');
+                    await new Promise(resolve => setTimeout(resolve, getDelay()));
+                }
+                return;
+            }
+
+            // Partition the array and get the pivot index
+            const pivotIndex = await partition(low, high);
+            
+            // Mark pivot as sorted (it's in its final position)
+            resetBarStates();
+            highlightBars([pivotIndex], 'sorted');
+            addConsoleMessage(`Pivot element ${array[pivotIndex]} is now in its final sorted position at index ${pivotIndex}`, 'info');
+            await new Promise(resolve => setTimeout(resolve, getDelay()));
+            
+            // Recursively sort elements before and after pivot
+            await quickSortRecursive(low, pivotIndex - 1);
+            await quickSortRecursive(pivotIndex + 1, high);
+        }
+        
+        // Partition function with visualization
+        async function partition(low, high) {
+            await checkPause();
+            resetBarStates();
+            
+            // Choose the rightmost element as pivot
+            const pivot = array[high];
+            highlightBars([high], 'pivot');
+            addConsoleMessage(`Selected pivot: ${pivot} at index ${high}`, 'info');
+            await new Promise(resolve => setTimeout(resolve, getDelay()));
+            
+            // Index of smaller element
+            let i = low - 1;
+            
+            // Highlight the current partition range
+            const partitionIndices = Array.from({length: high - low + 1}, (_, idx) => idx + low);
+            highlightBars(partitionIndices, 'partitioning');
+            addConsoleMessage(`Partitioning subarray from index ${low} to ${high}`, 'info');
+            await new Promise(resolve => setTimeout(resolve, getDelay()));
+            
+            // Compare each element with pivot
+            for (let j = low; j < high; j++) {
+                await checkPause();
+                
+                resetBarStates();
+                highlightBars([high], 'pivot');
+                highlightBars([j], 'comparing');
+                
+                addConsoleMessage(`Comparing element ${array[j]} with pivot ${pivot}`, 'compare');
+                await new Promise(resolve => setTimeout(resolve, getDelay()));
+                
+                // If current element is smaller than the pivot
+                if (array[j] < pivot) {
+                    // Increment index of smaller element
+                    i++;
+                    
+                    // Swap visualization
+                    if (i !== j) {
+                        resetBarStates();
+                        highlightBars([high], 'pivot');
+                        highlightBars([i, j], 'swapping');
+                        
+                        addConsoleMessage(`Swapping ${array[i]} at index ${i} with ${array[j]} at index ${j}`, 'swap');
+                        await new Promise(resolve => setTimeout(resolve, getDelay()));
+                        
+                        // Perform the swap
+                        [array[i], array[j]] = [array[j], array[i]];
+                        updateBars();
+                        
+                        await new Promise(resolve => setTimeout(resolve, getDelay() / 2));
+                    } else {
+                        addConsoleMessage(`Element ${array[j]} at index ${j} is already in correct position`, 'info');
+                    }
+                    
+                    // Highlight elements less than pivot
+                    resetBarStates();
+                    highlightBars([high], 'pivot');
+                    highlightBars(Array.from({length: i + 1}, (_, idx) => idx + low), 'lesser');
+                    await new Promise(resolve => setTimeout(resolve, getDelay() / 2));
+                } else {
+                    // Highlight elements greater than or equal to pivot
+                    resetBarStates();
+                    highlightBars([high], 'pivot');
+                    if (i >= low) {
+                        highlightBars(Array.from({length: i + 1}, (_, idx) => idx + low), 'lesser');
+                    }
+                    highlightBars([j], 'greater');
+                    addConsoleMessage(`${array[j]} >= ${pivot}, no swap needed`, 'info');
+                    await new Promise(resolve => setTimeout(resolve, getDelay() / 2));
+                }
+            }
+            
+            // Final pivot swap
+            const pivotFinalPos = i + 1;
+            
+            resetBarStates();
+            highlightBars([high, pivotFinalPos], 'swapping');
+            addConsoleMessage(`Putting pivot ${pivot} in its correct position at index ${pivotFinalPos}`, 'swap');
+            await new Promise(resolve => setTimeout(resolve, getDelay()));
+            
+            // Swap arr[i+1] and arr[high] (the pivot)
+            [array[pivotFinalPos], array[high]] = [array[high], array[pivotFinalPos]];
+            updateBars();
+            
+            // Show final partition state
+            resetBarStates();
+            if (pivotFinalPos > low) {
+                highlightBars(Array.from({length: pivotFinalPos - low}, (_, idx) => idx + low), 'lesser');
+            }
+            highlightBars([pivotFinalPos], 'pivot');
+            if (high > pivotFinalPos + 1) {
+                highlightBars(Array.from({length: high - pivotFinalPos}, (_, idx) => idx + pivotFinalPos + 1), 'greater');
+            }
+            
+            addConsoleMessage(`Partition complete. All elements to the left of index ${pivotFinalPos} are less than ${array[pivotFinalPos]}, all elements to the right are greater.`, 'info');
+            await new Promise(resolve => setTimeout(resolve, getDelay()));
+            
+            // Return the position where partition is done
+            return pivotFinalPos;
+        }
+
+        // Event Listeners
+        generateBtn.addEventListener('click', generateArray);
+        
+        sortBtn.addEventListener('click', () => {
+            if (!sorting) {
+                quickSort();
+            }
+        });
+        
+        pauseBtn.addEventListener('click', () => {
+            if (sorting) {
+                paused = !paused;
+                pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+                addConsoleMessage(paused ? 'Sorting paused.' : 'Sorting resumed.', 'info');
+            }
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            if (sorting) {
+                paused = true;
+                clearInterval(sortingInterval);
+                sorting = false;
+            }
+            generateArray();
+        });
+
+        // Initialize
+        generateArray();
+    </script>
+
+    <style>
+        /* Additional styles for quick sort visualization */
+        .pivot {
+            background-color: rgba(255, 165, 0, 0.8) !important; /* Orange */
+            border: 2px solid #FF8C00 !important;
+        }
+
+        .lesser {
+            background-color: rgba(135, 206, 250, 0.8) !important; /* LightSkyBlue */
+        }
+
+        .greater {
+            background-color: rgba(144, 238, 144, 0.8) !important; /* LightGreen */
+        }
+
+        .partitioning {
+            border: 1px dashed #666 !important;
+        }
+
+        /* Dark mode adjustments */
+        .dark-mode .pivot {
+            background-color: rgba(255, 140, 0, 0.8) !important; /* DarkOrange */
+            border: 2px solid #FF4500 !important;
+        }
+
+        .dark-mode .lesser {
+            background-color: rgba(70, 130, 180, 0.8) !important; /* SteelBlue */
+        }
+
+        .dark-mode .greater {
+            background-color: rgba(60, 179, 113, 0.8) !important; /* MediumSeaGreen */
+        }
+    </style>
+</body>
+</html>

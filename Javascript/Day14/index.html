@@ -1,0 +1,52 @@
+// Portfolio Script
+document.addEventListener("DOMContentLoaded", () => {
+    To run this code, follow these steps:
+
+    1. **Ensure You Have a Browser Environment**: This code is designed to run in a browser since it manipulates the DOM.
+
+    2. **Save the File**: Save the file as `index.html` in the same directory as your JavaScript file (`index.js`). The HTML file should include a reference to the JavaScript file. For example:
+        ```html
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+             <meta charset="UTF-8">
+             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+             <title>Portfolio</title>
+        </head>
+        <body>
+             <div id="portfolio"></div>
+             <script src="index.js"></script>
+        </body>
+        </html>
+        ```
+
+    3. **Open the HTML File in a Browser**: Double-click the `index.html` file to open it in your browser. The JavaScript will execute, and the portfolio projects will be displayed.
+
+    4. **Check the Console for Errors**: If nothing appears, open the browser's developer tools (usually by pressing `F12` or `Ctrl+Shift+I`) and check the console for any errors.
+
+    Let me know if you need further assistance!
+
+    const portfolioContainer = document.getElementById("portfolio");
+
+    projects.forEach(project => {
+        const projectCard = document.createElement("div");
+        projectCard.className = "project-card";
+
+        const projectTitle = document.createElement("h3");
+        projectTitle.textContent = project.title;
+
+        const projectDescription = document.createElement("p");
+        projectDescription.textContent = project.description;
+
+        const projectLink = document.createElement("a");
+        projectLink.href = project.link;
+        projectLink.textContent = "View Project";
+        projectLink.target = "_blank";
+
+        projectCard.appendChild(projectTitle);
+        projectCard.appendChild(projectDescription);
+        projectCard.appendChild(projectLink);
+
+        portfolioContainer.appendChild(projectCard);
+    });
+});
